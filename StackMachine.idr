@@ -20,7 +20,7 @@ binopDenote Times = mult
 
 expDenote : exp -> Nat
 expDenote (Const n) = n
-expDenote (Binop b e1 e2) = (binopDenote b) (expDenote e1) (expDenote e2)
+expDenote (Binop b e1 e2) = binopDenote b (expDenote e1) (expDenote e2)
 
 {-
 > expDenote (Const 42)
@@ -45,7 +45,7 @@ stack = List Nat
 
 instrDenote : instr -> stack -> Maybe stack
 instrDenote (iConst n) s                = Just (n :: s)
-instrDenote (iBinop b) (arg1::arg2::s') = Just ((binopDenote b) arg1 arg2 :: s')
+instrDenote (iBinop b) (arg1::arg2::s') = Just (binopDenote b arg1 arg2 :: s')
 instrDenote (iBinop b) _                = Nothing
 
 progDenote : prog -> stack -> Maybe stack
@@ -102,8 +102,8 @@ compileCorrect' = proof
 
 compileCorrectTheorem = proof
   intros
-  rewrite (appendNilRightNeutral (compile e))
-  rewrite (compileCorrect' e [] [])
+  rewrite appendNilRightNeutral (compile e)
+  rewrite compileCorrect' e [] []
   refine refl
 
 -- 2.2.1
